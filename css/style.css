@@ -13,7 +13,9 @@
 }
 
 body {
-    background: #F8F8F7;
+    background: #ffffff;
+    font-family: 'Source Serif Pro', serif;
+    font-size: 14pt;
 }
 
 p {
@@ -22,17 +24,4 @@ p {
 
 a:hover {
     text-decoration: underline;
-}
-
-div.section_title {
-    float: none;
-    background-color: #ffffff; 
-    color: #000000;
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 14pt;
-  padding: 0;
-}
-
-.author {
-  color: #5b2503;
 }
