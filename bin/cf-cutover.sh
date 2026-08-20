@@ -54,22 +54,22 @@ echo "zone $ZONE -> $zone_id (status: $zone_status)"
   die "zone is '$zone_status', not 'active'. The nameservers at GoDaddy have not taken effect yet. Wait, then re-run."
 
 # Cloudflare's edge certificate must exist before we send traffic through it.
-ssl=$(curl -s "${auth[@]}" "$API/zones/$zone_id/ssl/certificate_packs?status=all")
-ssl_state=$(echo "$ssl" | python3 -c '
-import json,sys
-d=json.load(sys.stdin)
-if not d.get("success"):
-    print("unknown"); sys.exit(0)
-packs=d.get("result") or []
-states=[p.get("status") for p in packs]
-print("active" if "active" in states else (",".join(states) if states else "none"))')
-echo "cloudflare edge certificate: $ssl_state"
-if [[ "$ssl_state" != "active" ]]; then
+# The authority here is a real TLS handshake against the live domain: if a
+# strict client completes one, the certificate is valid AND matches the
+# hostname, which is exactly the property we need and more than the API proves.
+# The API is only consulted for a nicer message, and a token scoped to
+# Zone:DNS:Edit cannot read it at all.
+if curl -sS -o /dev/null --max-time 15 "https://$ZONE/" 2>/dev/null; then
+  cert_cn=$(echo | openssl s_client -connect "$ZONE:443" -servername "$ZONE" 2>/dev/null \
+            | openssl x509 -noout -subject 2>/dev/null | sed 's/.*CN *= *//')
+  echo "edge certificate: valid for $ZONE (CN=$cert_cn)"
+else
   echo
-  echo "REFUSING TO FLIP. Cloudflare has no active certificate for this zone yet."
-  echo "Universal SSL usually issues within ~15 minutes of the zone going active."
-  echo "Check dash.cloudflare.com -> SSL/TLS -> Edge Certificates, then re-run."
-  $APPLY && exit 1 || exit 0
+  echo "REFUSING TO FLIP. https://$ZONE/ does not currently complete a TLS"
+  echo "handshake with a valid certificate. Flipping now would leave the domain"
+  echo "hard-down for anyone whose browser cached this domain's HSTS header."
+  echo "Wait for Cloudflare's Universal SSL (SSL/TLS -> Edge Certificates), then re-run."
+  exit 1
 fi
 
 # ---- plan ------------------------------------------------------------------

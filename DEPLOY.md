@@ -75,6 +75,19 @@ whose zone resources include `shifeng.me` — Zone:DNS:Edit is enough for the
 flip; adding the site in step 1 is a dashboard action either way. Revoke it
 afterwards at <https://dash.cloudflare.com/profile/api-tokens>.
 
+### Two zone settings to turn on by hand
+
+Neither can be set with a `Zone:DNS:Edit` token, and both are one click in the
+Cloudflare dashboard:
+
+- **SSL/TLS → Edge Certificates → Always Use HTTPS.** Plain `http://` currently
+  returns the site with a 200 instead of redirecting. super.so used to send HSTS,
+  which covered this; GitHub does not, so the redirect now has to be Cloudflare's
+  job.
+- **HSTS**, in the same place, once you are confident this domain will never need
+  to serve plain HTTP. Browsers that saw the old header still enforce it for two
+  years, but new visitors get nothing.
+
 ### Afterwards
 
 - **Do not set the zone SSL mode to "Full (strict)"** — GitHub serves Cloudflare
