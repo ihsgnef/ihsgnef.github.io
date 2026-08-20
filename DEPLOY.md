@@ -12,74 +12,80 @@ Note this repo is `<user>.github.io`, so it is served at the root of
 `https://ihsgnef.github.io/` and every root-relative path resolves both there
 and on the custom domain.
 
-## The DNS change
+## Moving DNS to Cloudflare, then cutting over
 
-Unlike praxis-research.org, this domain's DNS is at **GoDaddy**, not Cloudflare.
-There is no proxy to hide behind, so the records are edited in the GoDaddy DNS
-manager (or via their API, which requires a key and secret from
-developer.godaddy.com — note GoDaddy restricts API access on some account
-tiers, so the dashboard may be the only route).
+The domain is registered at GoDaddy and its DNS is there too. We are moving DNS
+to Cloudflare first, so the cutover can go through Cloudflare's proxy — the same
+arrangement as praxis-research.org, and for the same reason.
 
-The whole zone today is two records. There is **no MX, TXT, or CAA record**, so
-nothing else can break:
+### Why, in one paragraph
 
-| Action | Type | Name | Value |
-| --- | --- | --- | --- |
-| replace | A | `@` | `76.76.21.21` → `185.199.108.153` |
-| add | A | `@` | `185.199.109.153` |
-| add | A | `@` | `185.199.110.153` |
-| add | A | `@` | `185.199.111.153` |
-| add | AAAA | `@` | `2606:50c0:8000::153` |
-| add | AAAA | `@` | `2606:50c0:8001::153` |
-| add | AAAA | `@` | `2606:50c0:8002::153` |
-| add | AAAA | `@` | `2606:50c0:8003::153` |
-| replace | CNAME | `www` | `cname.super.so` → `ihsgnef.github.io` |
+`shifeng.me` sends **HSTS with a two-year max-age**. Any window without a valid
+certificate is a hard connection failure for returning visitors, not a warning
+they can click through. Pointing GoDaddy's records straight at GitHub opens
+exactly that window while GitHub provisions, and on praxis-research.org GitHub
+had not even started after five minutes. Proxying through Cloudflare closes it:
+Cloudflare terminates TLS with its own certificate and forwards to GitHub.
 
-## The certificate gap — read this before flipping
+### The sequence
 
-`shifeng.me` sends **HSTS with a two-year max-age** (from super.so). Between DNS
-moving and GitHub issuing its certificate, HTTPS has no valid certificate, and a
-browser that has seen that header will **refuse the connection** rather than
-offer a click-through. Anyone who has visited before is affected.
+The order is chosen so that **every step is a no-op for visitors until the last
+one**, which is instant.
 
-praxis-research.org solved this by proxying through Cloudflare, whose edge
-certificate was already valid. **That option does not exist here** — GoDaddy DNS
-does not proxy. So either:
+1. **Add the site at Cloudflare** — dash.cloudflare.com → Add a site →
+   `shifeng.me` → Free plan. Cloudflare scans GoDaddy and imports what it finds:
+   `A @ -> 76.76.21.21` and `CNAME www -> cname.super.so`.
 
-- **Accept a short gap.** Do it at a quiet hour. In the best case GitHub issues
-  within a minute or two of seeing DNS.
-- **Move DNS to Cloudflare first**, then proxy, exactly like praxis-research.org.
-  Change the nameservers at GoDaddy, recreate these records in Cloudflare, and
-  set the apex and `www` to proxied. This zone has only two records and no
-  email, so it is an unusually safe zone to move — but it is still a separate
-  job, and nameserver changes take time to propagate.
+2. **Set both records to DNS-only (grey cloud) before going further.** Cloudflare
+   defaults new records to proxied, and proxying before its certificate exists
+   would create the very gap we are avoiding. DNS-only reproduces today's
+   behaviour exactly: Vercel keeps serving, with its own valid certificate.
 
-### Order of operations, if accepting the gap
+3. **Change the nameservers at GoDaddy** to the two Cloudflare gives you.
+   Because step 2 made the records identical to today's, nothing changes for
+   visitors. This is the slow step — usually minutes, occasionally hours.
 
-The order matters, and it is not the obvious one:
+4. **Wait for the zone to go active and the certificate to issue.**
+   Cloudflare → SSL/TLS → Edge Certificates should show an active Universal SSL
+   certificate. `bin/cf-cutover.sh` checks both and refuses to continue
+   otherwise.
 
-1. **Set the custom domain first**, while DNS still points at super.so:
-   Settings → Pages → Custom domain → `shifeng.me`. `static/CNAME` already
-   carries it into every build, which is what stops a later deploy from clearing
-   it. GitHub will report a failed DNS check; that is expected.
-2. **Change the DNS records** at GoDaddy, per the table above.
-3. **Immediately re-add the custom domain** — clear it and set it again. GitHub
-   caches the failed DNS check from step 1, and on praxis-research.org that left
-   `https_certificate.state` at `none` for over five minutes. Re-adding forces a
-   fresh check and an immediate certificate request.
-4. **Watch for the certificate**, then enforce HTTPS:
+5. **Tell GitHub the domain is ours** — Settings → Pages → Custom domain →
+   `shifeng.me`. `static/CNAME` already carries it into every build, which is
+   what stops a later deploy from clearing it. From here
+   `ihsgnef.github.io` redirects to `shifeng.me`, so staging stops being
+   separately viewable.
 
-```bash
-gh api repos/ihsgnef/ihsgnef.github.io/pages --jq '{cname,cert:.https_certificate.state}'
-gh api -X PUT repos/ihsgnef/ihsgnef.github.io/pages -F https_enforced=true
-```
+6. **Flip the records.** This is the only visitor-visible moment, and it is
+   instant because Cloudflare's certificate is already in hand:
 
-Check the real path rather than your own resolver, which will happily serve you
-a stale answer for an hour:
+   ```bash
+   bin/cf-cutover.sh            # preconditions + plan, changes nothing
+   bin/cf-cutover.sh --apply
+   ```
 
-```bash
-curl -sI --resolve shifeng.me:443:185.199.108.153 https://shifeng.me/
-```
+   It repoints the apex and `www` at GitHub Pages, proxied, and backs up what it
+   deletes first.
+
+### The token
+
+`bin/cf-cutover.sh` reads `~/.config/praxis/cloudflare-token` (mode 600). The
+existing token is scoped to praxis-research.org, so it needs replacing with one
+whose zone resources include `shifeng.me` — Zone:DNS:Edit is enough for the
+flip; adding the site in step 1 is a dashboard action either way. Revoke it
+afterwards at <https://dash.cloudflare.com/profile/api-tokens>.
+
+### Afterwards
+
+- **Do not set the zone SSL mode to "Full (strict)"** — GitHub serves Cloudflare
+  a `*.github.io` certificate, which strict mode rejects with a 526.
+- GitHub will never issue its own certificate while the records are proxied, and
+  `https_enforced` cannot be turned on. That is expected.
+- **HSTS will stop being sent**, because it came from super.so and GitHub does
+  not send it. Re-enable it under Cloudflare → SSL/TLS → Edge Certificates if
+  you want it, once you are sure you will not need plain HTTP on this domain.
+- Cloudflare prepends a managed content-signals block to `robots.txt`, as it
+  does on praxis-research.org. Toggle it in the dashboard if unwanted.
 
 ## URLs
 
@@ -91,9 +97,12 @@ the unfinished blog post, which was also removed from praxis-research.org.
 
 ## Rolling back
 
-Restore the two original records at GoDaddy:
+After step 6, restore the two original records — `bin/cf-cutover.sh` saves them
+to `dns-backup-shifeng.me.json` before deleting anything:
 
     A     shifeng.me      -> 76.76.21.21
     CNAME www.shifeng.me  -> cname.super.so
 
-Nothing in this repo needs to change.
+Before step 6, rolling back just means pointing the nameservers back at
+`ns35`/`ns36.domaincontrol.com` at GoDaddy. Nothing in this repo changes either
+way.
