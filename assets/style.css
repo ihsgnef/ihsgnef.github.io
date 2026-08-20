@@ -1,0 +1,278 @@
+/* Praxis Research — the whole stylesheet.
+   Deliberately plain: one system font stack, black text on white, blue links.
+   No web fonts, so the site makes no external requests at all. */
+
+:root {
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --bg: #ffffff;
+  --fg: #1a1a1a;           /* body text */
+  --heading: #000000;
+  --muted: #666666;        /* bylines, affiliations */
+  --rule: #dddddd;
+  --shade: #f5f5f5;        /* code, notes */
+  --link: #0645ad;
+  --link-hover: #0b0080;
+
+  --measure: 42rem;
+  --container: 58rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a1a;
+    --fg: #e0e0e0;
+    --heading: #ffffff;
+    --muted: #999999;
+    --rule: #333333;
+    --shade: #262626;
+    --link: #7aa6ff;
+    --link-hover: #a8c4ff;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.site-header {
+  border-bottom: 1px solid var(--rule);
+  padding: 1.25rem 0;
+  margin-bottom: 3rem;
+}
+
+.site-header .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.brand:hover { text-decoration: underline; }
+
+.site-nav {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.site-nav a { color: var(--link); text-decoration: none; }
+.site-nav a:hover { text-decoration: underline; }
+.site-nav a.active { color: var(--fg); font-weight: 700; }
+
+/* -------------------------------------------------------------------- main */
+
+main { flex: 1 0 auto; }
+
+.content {
+  max-width: var(--measure);
+  padding-bottom: 4rem;
+}
+
+h1, h2, h3, h4 {
+  color: var(--heading);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 2rem 0 0.75rem;
+}
+
+h1 { font-size: 1.75rem; margin-top: 0; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; }
+
+p, ul, ol, table, figure, blockquote { margin: 0 0 1rem; }
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+}
+
+a:hover { color: var(--link-hover); }
+
+ul, ol { padding-left: 1.4rem; }
+li { margin-bottom: 0.3rem; }
+li > ul, li > ol { margin: 0.3rem 0 0.4rem; }
+
+strong { font-weight: 700; color: var(--heading); }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+blockquote {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--rule);
+  color: var(--muted);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--shade);
+  padding: 0.1em 0.3em;
+}
+
+pre {
+  background: var(--shade);
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  font-size: 0.9rem;
+}
+
+pre code { background: none; padding: 0; font-size: inherit; }
+
+figure { margin: 1.5rem 0; }
+
+figure img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--rule);
+}
+
+figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------ small print */
+
+.byline, .venue, .meta, .summary, .backlink, .note {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.byline { margin-top: -0.4rem; margin-bottom: 1rem; }
+.venue { margin-top: -0.7rem; }
+
+.backlink { margin-bottom: 1.5rem; }
+
+.paper-link { margin-bottom: 1.5rem; }
+
+.note {
+  background: var(--shade);
+  padding: 0.6rem 0.9rem;
+}
+
+/* ------------------------------------------------------- tables and lists */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--heading);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 0.75rem 0.4rem 0;
+}
+
+table td {
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0;
+}
+
+.post-list li {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.post-list li:last-child { border-bottom: 0; }
+
+.post-list h2 { margin: 0 0 0.25rem; font-size: 1.2rem; }
+.post-list .byline { margin: 0 0 0.3rem; }
+.post-list .summary { margin: 0; }
+
+/* people: `Name — affiliation`, affiliation muted */
+.people ul { list-style: none; padding-left: 0; }
+.people li { margin-bottom: 0.4rem; }
+.people h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; }
+.people .meta::before { content: " — "; }
+
+/* ------------------------------------------------------------------ footer */
+
+.site-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--rule);
+  padding: 1.25rem 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.site-footer p { margin: 0; }
+
+/* ------------------------------------------------------------------ mobile */
+
+@media (max-width: 40rem) {
+  .site-header { margin-bottom: 2rem; }
+  .site-header .container { flex-direction: column; align-items: flex-start; }
+  .site-nav { gap: 1rem; }
+  h1 { font-size: 1.5rem; }
+  table { display: block; overflow-x: auto; }
+}
+
+/* publications: title, then venue and authors as one small muted block */
+.publications h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin: 1.8rem 0 0.2rem;
+}
+
+.publications h3 + p {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.publications h3 + p a { color: var(--link); }
+
+/* group: year sub-headings under "Past mentees" */
+.people h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 1.5rem 0 0.5rem;
+}

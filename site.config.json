@@ -1,0 +1,17 @@
+{
+  "title": "Shi Feng",
+  "description": "Assistant professor leading a research group on AI alignment.",
+  "url": "https://shifeng.me",
+  "nav": [
+    { "label": "About", "href": "/" },
+    { "label": "Group", "href": "/group/" },
+    { "label": "Publications", "href": "/publications/" },
+    { "label": "Teaching", "href": "/teaching/" },
+    { "label": "FAQ", "href": "/faq/" }
+  ],
+  "contactForm": "https://airtable.com/appHnvwbow1epprSd/pagqZfMyMvha6rWnD/form",
+  "interestForm": "https://docs.google.com/forms/d/1r_88bZrZ5QRu9m-pcLHwRPGzmSVLmMPVYD8ruJUaX5k/",
+  "scholar": "https://scholar.google.com/citations?hl=en&user=d0npq2oAAAAJ",
+  "email": "shi.feng@gwu.edu",
+  "footerNote": "Shi Feng"
+}

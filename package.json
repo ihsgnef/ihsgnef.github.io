@@ -1,0 +1,17 @@
+{
+  "name": "shifeng-me",
+  "version": "1.0.0",
+  "private": true,
+  "description": "shifeng.me \u2014 static site, markdown in, HTML out.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node build.mjs && node serve.mjs",
+    "check": "node build.mjs --check",
+    "deploy": "node deploy.mjs",
+    "preview": "node build.mjs && node preview.mjs"
+  },
+  "dependencies": {
+    "marked": "^15.0.7"
+  }
+}
