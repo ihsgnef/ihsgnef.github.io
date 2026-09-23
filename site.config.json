@@ -4,7 +4,7 @@
   "url": "https://shifeng.me",
   "nav": [
     { "label": "About", "href": "/" },
-    { "label": "Group", "href": "/group/" },
+    { "label": "Group", "href": "https://praxis-research.org/people/" },
     { "label": "Publications", "href": "/publications/" },
     { "label": "Teaching", "href": "/teaching/" },
     { "label": "FAQ", "href": "/faq/" }
