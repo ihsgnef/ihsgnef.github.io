@@ -137,7 +137,7 @@ function shell(page, inner) {
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
-<body>
+<body class="layout-${page.layout || 'page'}">
 <header class="site-header">
   <div class="container">
     <a class="brand" href="/">${esc(site.title)}</a>
