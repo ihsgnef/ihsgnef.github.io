@@ -22,11 +22,6 @@ summer (application open). I’ve mentored for
 I’m recruiting 1-2 postdoc-level research scientists to work on AI safety. No
 PhD degree required but comparable level of experience / skills are expected.
 
-## PhD students
-
-Yes, I’m recruiting PhD students. Fill out the [interest form]({{interestForm}})
-and check out [Praxis Research](https://praxis-research.org/).
-
 ## You are my faculty advisor, can you help me with [x]?
 
 Depending on what [x] is, I may or may not be the best person to help. See
