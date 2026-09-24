@@ -16,7 +16,8 @@ check is the bar for "done"; CI runs the same command and blocks the deploy.
 ## Rules
 
 1. **Edit `content/`, `site.config.json`, or `assets/style.css`. Nothing else**,
-   unless the task is explicitly about the generator.
+   unless the task is explicitly about the generator. `assets/design.css` is a
+   verbatim copy of praxis-research.org's; keep it identical to that file.
 2. **Never edit or commit `dist/`.** It is generated and gitignored.
 3. **Frontmatter is `key: value` only** — no nesting, no lists, no multi-line
    values. The parser rejects anything else on purpose.

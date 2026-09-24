@@ -138,7 +138,7 @@ Sahil Singla, Eric Wallace, **Shi Feng**, Soheil Feizi
 TACL 2019 [acl](https://aclanthology.org/Q19-1029/)
 Eric Wallace, Pedro Rodriguez, **Shi Feng**, Jordan Boyd-Graber
 
-### What can AI do for me: Evaluating Machine Learning Interpretations in Cooperative Play,
+### What can AI do for me: Evaluating Machine Learning Interpretations in Cooperative Play
 IUI 2019 [arxiv](https://arxiv.org/abs/1810.09648)
 **Shi Feng**, Jordan Boyd-Graber
 

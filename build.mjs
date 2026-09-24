@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync, cpSync, ex
 import { join, dirname, basename, extname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
+import { createHash } from 'node:crypto';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const SRC = join(ROOT, 'content');
@@ -88,6 +89,13 @@ function splitMeta(html) {
 
 /* --------------------------------------------------------------- loading */
 
+// Stylesheets are cached by the host for hours; a content hash in the query
+// string makes a style change show up on the next page load.
+const assetVersion = createHash('sha1')
+  .update(readFileSync(join(ROOT, 'assets', 'design.css')))
+  .update(readFileSync(join(ROOT, 'assets', 'style.css')))
+  .digest('hex').slice(0, 8);
+
 function loadDir(dir) {
   const abs = join(SRC, dir);
   if (!existsSync(abs)) return [];
@@ -135,7 +143,8 @@ function shell(page, inner) {
 <meta name="twitter:card" content="summary">
 <link rel="alternate" type="application/rss+xml" title="${esc(site.title)}" href="/feed.xml">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/design.css?v=${assetVersion}">
+<link rel="stylesheet" href="/assets/style.css?v=${assetVersion}">
 </head>
 <body class="layout-${page.layout || 'page'}">
 <header class="site-header">
@@ -292,7 +301,7 @@ if (CHECK) {
     const html = readFileSync(f, 'utf8');
     const where = '/' + relative(OUT, f);
     for (const m of html.matchAll(/(?:href|src)="(\/[^"#]*)"/g)) {
-      const href = m[1];
+      const href = m[1].replace(/\?.*$/, "");   // ignore a cache-busting query
       const candidates = [href, href + 'index.html', href + '/index.html', href.replace(/\/$/, '') + '/index.html'];
       if (!candidates.some((c) => exists.has(c))) problems.push(`${where}: dead internal link ${href}`);
     }

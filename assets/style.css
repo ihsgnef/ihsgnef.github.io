@@ -1,53 +1,8 @@
-/* Praxis Research — the whole stylesheet.
-   Deliberately plain: one system font stack, black text on white, blue links.
-   No web fonts, so the site makes no external requests at all. */
+/* Site chrome only — header, navigation, footer, and the page layouts.
+   Everything else (tokens, base typography, components) is design.css, which
+   is shared verbatim with artifacts. Do not put colours here; use the tokens. */
 
-:root {
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-               Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-  --bg: #ffffff;
-  --fg: #1a1a1a;           /* body text */
-  --heading: #000000;
-  --muted: #666666;        /* bylines, affiliations */
-  --rule: #dddddd;
-  --shade: #f5f5f5;        /* code, notes */
-  --link: #0645ad;
-  --link-hover: #0b0080;
-
-  --measure: 42rem;
-  --container: 58rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1a1a1a;
-    --fg: #e0e0e0;
-    --heading: #ffffff;
-    --muted: #999999;
-    --rule: #333333;
-    --shade: #262626;
-    --link: #7aa6ff;
-    --link-hover: #a8c4ff;
-  }
-}
-
-*, *::before, *::after { box-sizing: border-box; }
-
-html { -webkit-text-size-adjust: 100%; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.6;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+body { display: flex; flex-direction: column; min-height: 100vh; }
 
 .container {
   width: 100%;
@@ -72,165 +27,99 @@ body {
   gap: 0.5rem 2rem;
 }
 
+/* The brand is the site's only title. On the front page it is the <h1>; on
+   every other page it is a link home. Either way it appears exactly once, and
+   no page repeats it as a heading. */
 .brand {
   font-size: 1.1rem;
   font-weight: 700;
+  line-height: 1.3;
   color: var(--heading);
   text-decoration: none;
+  margin: 0;
 }
 
-.brand:hover { text-decoration: underline; }
+a.brand:hover { text-decoration: underline; }
 
-.site-nav {
-  display: flex;
-  gap: 1.25rem;
-  font-size: 0.95rem;
-}
-
-.site-nav a { color: var(--link); text-decoration: none; }
+.site-nav { display: flex; gap: 1.25rem; font-size: 0.95rem; }
+.site-nav a { color: var(--heading); text-decoration: none; }
 .site-nav a:hover { text-decoration: underline; }
-.site-nav a.active { color: var(--fg); font-weight: 700; }
+.site-nav a.active { color: var(--ink); font-weight: 700; }
 
 /* -------------------------------------------------------------------- main */
 
 main { flex: 1 0 auto; }
 
-.content {
-  max-width: var(--measure);
-  padding-bottom: 4rem;
-}
+.content { max-width: var(--measure); padding-bottom: 4rem; }
+.content.wide { max-width: var(--container); }
 
-h1, h2, h3, h4 {
-  color: var(--heading);
-  font-weight: 700;
-  line-height: 1.25;
-  margin: 2rem 0 0.75rem;
-}
-
-h1 { font-size: 1.75rem; margin-top: 0; }
-h2 { font-size: 1.3rem; }
-h3 { font-size: 1.1rem; }
-h4 { font-size: 1rem; }
-
-p, ul, ol, table, figure, blockquote { margin: 0 0 1rem; }
-
-a {
-  color: var(--link);
-  text-decoration: underline;
-}
-
-a:hover { color: var(--link-hover); }
-
-ul, ol { padding-left: 1.4rem; }
-li { margin-bottom: 0.3rem; }
-li > ul, li > ol { margin: 0.3rem 0 0.4rem; }
-
-strong { font-weight: 700; color: var(--heading); }
-
-hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
-
-blockquote {
-  margin-left: 0;
-  padding-left: 1rem;
-  border-left: 3px solid var(--rule);
-  color: var(--muted);
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  background: var(--shade);
-  padding: 0.1em 0.3em;
-}
-
-pre {
-  background: var(--shade);
-  padding: 0.9rem 1rem;
-  overflow-x: auto;
-  font-size: 0.9rem;
-}
-
-pre code { background: none; padding: 0; font-size: inherit; }
-
-figure { margin: 1.5rem 0; }
-
-figure img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  border: 1px solid var(--rule);
-}
-
-figcaption {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-/* ------------------------------------------------------------ small print */
-
-.byline, .venue, .meta, .summary, .backlink, .note {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.byline { margin-top: -0.4rem; margin-bottom: 1rem; }
-.venue { margin-top: -0.7rem; }
-
-.backlink { margin-bottom: 1.5rem; }
-
+.byline { font-size: 0.9rem; color: var(--muted); margin: -0.4rem 0 1rem; }
+.venue { font-size: 0.9rem; color: var(--muted); margin-top: -0.7rem; }
+.backlink { font-size: 0.9rem; margin-bottom: 1.5rem; }
 .paper-link { margin-bottom: 1.5rem; }
+.summary { font-size: 0.9rem; color: var(--muted); }
+.note { background: var(--surface); padding: 0.6rem 0.9rem; font-size: 0.9rem;
+        color: var(--muted); }
 
-.note {
-  background: var(--shade);
-  padding: 0.6rem 0.9rem;
+/* ----------------------------------------------------------------- listings */
+
+/* The front page: eyebrow-labelled sections of entry cards; papers grouped
+   by year under a small year heading and a rule. */
+.listing { margin-top: 3rem; }
+.eyebrow, .year {
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 1rem;
+}
+.year { margin-top: 1.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--rule); }
+.eyebrow + .year, .listing > .year:first-child { margin-top: 0; }
+
+.entries { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.entry { border: 1px solid var(--rule); border-radius: 6px; padding: 0.9rem 1.1rem; }
+.entry-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem 1rem; }
+.entry h2 { margin: 0; font-size: 1.05rem; line-height: 1.35; text-wrap: balance; }
+.entry h2 a, .entry h2 a:visited, .entry h2 a:hover { color: var(--heading); text-decoration: none; }
+.entry h2 a:hover { text-decoration: underline; }
+.pill {
+  flex: none; margin-top: 0.15rem; padding: 0.1rem 0.5rem; border: 1px solid var(--rule); border-radius: 4px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  white-space: nowrap;
+}
+/* a published venue is tinted green; a presentation (oral, spotlight) rides in
+   the pill and tints it red instead */
+.pill--venue { color: var(--pos); border-color: var(--pos); background: var(--pos-wash); }
+.pill--note { color: var(--award); border-color: var(--award); background: var(--award-wash); }
+.entry-meta {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem;
+  font-size: 0.85rem; color: var(--muted); margin: 0.35rem 0 0;
+}
+.entry-meta time, .entry-meta span:last-child:not(:first-child) { flex: none; }
+.entry .summary { margin: 0.5rem 0 0; color: var(--ink); }
+@media (max-width: 480px) {
+  .entry-head { flex-direction: column; }
+  .pill { margin-top: 0; }
 }
 
-/* ------------------------------------------------------- tables and lists */
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 2rem;
-}
-
-table th {
-  text-align: left;
-  font-weight: 700;
-  color: var(--heading);
-  border-bottom: 1px solid var(--rule);
-  padding: 0 0.75rem 0.4rem 0;
-}
-
-table td {
-  padding: 0.5rem 0.75rem 0.5rem 0;
-  border-bottom: 1px solid var(--rule);
-  vertical-align: top;
-}
-
-.post-list {
-  list-style: none;
-  padding: 0;
-  margin: 1.5rem 0 0;
-}
-
-.post-list li {
-  padding-bottom: 1.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--rule);
-}
-
+/* other listings (notes) */
+.post-list { list-style: none; padding: 0; margin: 1.5rem 0 0; }
+.post-list li { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--rule); }
 .post-list li:last-child { border-bottom: 0; }
-
 .post-list h2 { margin: 0 0 0.25rem; font-size: 1.2rem; }
+.post-list h2 a, .post-list h2 a:visited, .post-list h2 a:hover { color: var(--heading); text-decoration: none; }
 .post-list .byline { margin: 0 0 0.3rem; }
 .post-list .summary { margin: 0; }
 
-/* people: `Name — affiliation`, affiliation muted */
+/* people: `Name — affiliation`, affiliation muted; year sub-headings under
+   "Past mentees" */
 .people ul { list-style: none; padding-left: 0; }
 .people li { margin-bottom: 0.4rem; }
 .people h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; }
+.people h3 { font-size: 0.95rem; color: var(--muted); margin: 1.5rem 0 0.5rem; }
 .people .meta::before { content: " — "; }
+
+/* publications: title, then venue and authors as one small muted block */
+.publications h3 { font-size: 1.02rem; margin: 1.8rem 0 0.2rem; }
+.publications h3 + p { font-size: 0.9rem; color: var(--muted); margin-bottom: 0; }
+.publications h3 + p a { color: var(--accent); }
 
 /* ------------------------------------------------------------------ footer */
 
@@ -241,7 +130,6 @@ table td {
   font-size: 0.9rem;
   color: var(--muted);
 }
-
 .site-footer p { margin: 0; }
 
 /* ------------------------------------------------------------------ mobile */
@@ -251,53 +139,4 @@ table td {
   .site-header .container { flex-direction: column; align-items: flex-start; }
   .site-nav { gap: 1rem; }
   h1 { font-size: 1.5rem; }
-  table { display: block; overflow-x: auto; }
 }
-
-/* publications: title, then venue and authors as one small muted block */
-.publications h3 {
-  font-size: 1.02rem;
-  font-weight: 700;
-  margin: 1.8rem 0 0.2rem;
-}
-
-.publications h3 + p {
-  font-size: 0.92rem;
-  color: var(--muted);
-  margin-bottom: 0;
-}
-
-.publications h3 + p a { color: var(--link); }
-
-/* group: year sub-headings under "Past mentees" */
-.people h3 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--muted);
-  margin: 1.5rem 0 0.5rem;
-}
-
-/* Home page only: Cardo, self-hosted so the site still makes no external
-   requests. Latin subset from Google Fonts (SIL Open Font License). */
-@font-face {
-  font-family: "Cardo";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(/assets/fonts/cardo-400.woff2) format("woff2");
-}
-@font-face {
-  font-family: "Cardo";
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url(/assets/fonts/cardo-400-italic.woff2) format("woff2");
-}
-@font-face {
-  font-family: "Cardo";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(/assets/fonts/cardo-700.woff2) format("woff2");
-}
-body.layout-home { --font-body: "Cardo", Georgia, serif; }

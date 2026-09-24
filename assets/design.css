@@ -1,0 +1,214 @@
+/* the one web font; @import must come first, so it sits above the banner */
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+
+/* ============================================================================
+   Praxis design system — the shared core.
+
+   This file is the whole system. The website links it; an artifact inlines it
+   verbatim inside <style>, because an artifact cannot load external CSS.
+   Nothing here knows about the website's header or navigation; that lives in
+   site.css. Keep it that way, so this file stays copy-pasteable.
+
+   https://praxis-research.org/design/
+   ========================================================================= */
+
+/* --- tokens ---------------------------------------------------------------
+   Three theme states, and all three are needed. The website only ever sees
+   the first two. An artifact viewer may stamp data-theme on the root element,
+   and the default "system" setting stamps nothing — so a colour defined only
+   inside a media or [data-theme] block will not apply in the un-stamped case.
+   Define every colour here; never inside a component rule.                  */
+
+:root {
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+               Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --bg:       #ffffff;
+  --surface:  #f4f6f8;   /* callouts, code, table stripes */
+  --ink:      #1a1d21;   /* body text */
+  --heading:  #0b0d0f;
+  --muted:    #5f6b74;   /* captions, bylines, secondary cells */
+  --rule:     #dce1e6;
+  --accent:   #125fa8;   /* links, and nothing else */
+  --pos:      #17624a;   /* supports, above, pass */
+  --neg:      #9c3d24;   /* refutes, below, fail */
+  --pos-wash: rgba(23, 98, 74, 0.10);
+  --neg-wash: rgba(156, 61, 36, 0.10);
+  --award:    #b3261e;   /* an oral or spotlight, and nothing else */
+  --award-wash: rgba(179, 38, 30, 0.10);
+
+  --measure:   50rem;    /* reading column */
+  --container: 58rem;    /* full width, for tables and figures */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:       #15181b;
+    --surface:  #1d2126;
+    --ink:      #dfe4e8;
+    --heading:  #ffffff;
+    --muted:    #96a2ab;
+    --rule:     #2c3238;
+    --accent:   #7fb3e8;
+    --pos:      #5fc39d;
+    --neg:      #e08a68;
+    --pos-wash: rgba(95, 195, 157, 0.12);
+    --neg-wash: rgba(224, 138, 104, 0.12);
+  --award:    #f28b82;
+  --award-wash: rgba(242, 139, 130, 0.14);
+    --award:    #f28b82;
+    --award-wash: rgba(242, 139, 130, 0.14);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:       #15181b;
+  --surface:  #1d2126;
+  --ink:      #dfe4e8;
+  --heading:  #ffffff;
+  --muted:    #96a2ab;
+  --rule:     #2c3238;
+  --accent:   #7fb3e8;
+  --pos:      #5fc39d;
+  --neg:      #e08a68;
+  --pos-wash: rgba(95, 195, 157, 0.12);
+  --neg-wash: rgba(224, 138, 104, 0.12);
+}
+
+/* --- base ---------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scrollbar-gutter: stable; }
+
+body {
+  margin: 0;
+  background: var(--bg);          /* explicit: an artifact composites over the
+                                     viewer's ground, so never leave this unset */
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;                /* the base size; every page inherits it */
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  color: var(--heading);
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+  margin: 2rem 0 0.75rem;
+}
+
+h1 { font-size: 1.75rem; margin-top: 0; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; }
+
+p, ul, ol, table, figure, blockquote, pre { margin: 0 0 1rem; }
+
+a { color: var(--accent); text-decoration: underline; }
+a:hover { text-decoration-thickness: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+ul, ol { padding-left: 1.4rem; }
+li { margin-bottom: 0.3rem; }
+li > ul, li > ol { margin: 0.3rem 0 0.4rem; }
+
+strong { font-weight: 700; color: var(--heading); }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+
+blockquote {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--rule);
+  color: var(--muted);
+}
+
+code { font-family: var(--font-mono); font-size: 0.9em;
+       background: var(--surface); padding: 0.1em 0.3em; }
+
+pre { background: var(--surface); padding: 0.9rem 1rem; overflow-x: auto;
+      font-size: 0.9rem; }
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* --- tables ---------------------------------------------------------------
+   Wide content scrolls inside its own container so the page never scrolls
+   sideways. Wrap any wide table in <div class="scroll">.                    */
+
+.scroll { overflow-x: auto; margin: 0 0 1rem; }
+
+table { width: 100%; border-collapse: collapse; }
+
+th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--heading);
+  border-bottom: 1px solid var(--rule);
+  padding: 0 0.75rem 0.4rem 0;
+}
+
+td {
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+/* digits that line up in columns */
+.num, .tabular td, .tabular th { font-variant-numeric: tabular-nums; }
+.num { font-family: var(--font-mono); }
+
+/* --- components -----------------------------------------------------------
+   Six, deliberately. Anything past this is a one-off and belongs in the page
+   that needs it, not here.                                                  */
+
+/* 1. callout — an aside that must not be skimmed past */
+.callout {
+  background: var(--surface);
+  border-left: 3px solid var(--rule);
+  padding: 0.8rem 1rem;
+  margin: 1.5rem 0;
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout--pos { background: var(--pos-wash); border-left-color: var(--pos); }
+.callout--neg { background: var(--neg-wash); border-left-color: var(--neg); }
+
+/* 2. chip — a short status or label, inline */
+.chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.chip--pos { color: var(--pos); border-color: var(--pos); background: var(--pos-wash); }
+.chip--neg { color: var(--neg); border-color: var(--neg); background: var(--neg-wash); }
+
+/* 3. meta — bylines, dates, captions, affiliations */
+.meta { font-size: 0.9rem; color: var(--muted); }
+
+/* 4. figure */
+figure { margin: 1.5rem 0; }
+figure img, figure svg { max-width: 100%; height: auto; display: block;
+                         border: 1px solid var(--rule); }
+figcaption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--muted); }
+
+/* 5. lede — the one paragraph that states the point */
+.lede { font-size: 1.1rem; color: var(--ink); }
+
+/* 6. semantic text */
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+
+/* --- motion -------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

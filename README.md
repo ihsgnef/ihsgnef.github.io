@@ -1,8 +1,10 @@
 # shifeng.me
 
 Personal site. Markdown in, static HTML out. No Notion, no CMS, no framework —
-one build script (`build.mjs`) and one stylesheet (`assets/style.css`). Same
-generator as [praxis-research.org](https://github.com/praxis-research/praxis-research.github.io).
+one build script (`build.mjs`) and two stylesheets. Same generator and design
+system as [praxis-research.org](https://github.com/praxis-research/praxis-research.github.io):
+`assets/design.css` is a verbatim copy of the lab site's, and `assets/style.css`
+holds only site chrome and layouts.
 
 ```bash
 npm install
@@ -22,7 +24,8 @@ Push to `main` and GitHub Actions builds and deploys.
 | Courses | `content/teaching.md` |
 | FAQ | `content/faq.md` |
 | Nav, site title, form URLs, email | `site.config.json` |
-| Colours, fonts, spacing | `assets/style.css` (all of it is in `:root`) |
+| Colours, fonts, spacing | `assets/design.css` — copied from the lab site; change it there and copy it back |
+| Header, nav, page layouts | `assets/style.css` (no colours; use the tokens) |
 | PDFs and images | `static/docs/`, `static/img/` — served at `/docs/…`, `/img/…` |
 
 `static/` is copied to the site root verbatim. That is what keeps the old
