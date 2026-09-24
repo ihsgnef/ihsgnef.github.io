@@ -10,8 +10,12 @@ ICML 2026 (spotlight) [arxiv](https://arxiv.org/abs/2606.08629)
 David D. Baek, Xinnuo Li, Anay Gupta, Taslim Mahbub, Kejian Shi, Max Tegmark, **Shi Feng**
 
 ### Building Comparative Motivation Profiles with Instrumental Interventions
-[arxiv](https://arxiv.org/abs/2606.08243)
+NeurIPS 2026 [arxiv](https://arxiv.org/abs/2606.08243) [blog](https://praxis-research.org/comparative-motivation-profiles)
 David Vella Zarb, Rustem Turtayev, Taywon Min, Jinghua Ou, **Shi Feng**
+
+### Self-Modeling Interventions Modulate Emergent Misalignment
+NeurIPS 2026 [blog](https://praxis-research.org/self-modeling-interventions)
+Arush Tagade, Shaoheng Zhou, Jiaxin Wen, **Shi Feng**
 
 ### Covert Influence Between Language Models
 [arxiv](https://arxiv.org/abs/2606.04071)
