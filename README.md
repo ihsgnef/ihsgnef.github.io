@@ -48,8 +48,9 @@ stylesheet renders the rest of the line muted.
 
 ## The Praxis listing and posts
 
-The front page lists praxis-research.org's front page (posts, then papers by
-year) one line each: title, venue, month. `npm run sync-praxis` regenerates it
+The front page lists praxis-research.org's front page as one "Posts" list —
+its posts, then its papers from `praxisSince` (in `site.config.json`) on — one
+line each: title, then venue and year (NeurIPS’26) or, if unpublished, month. `npm run sync-praxis` regenerates it
 from a praxis-website checkout (`../praxis-website` at `origin/main` by default;
 `node bin/sync-praxis.mjs <checkout> [ref]` otherwise). It writes
 `content/praxis.json`, copies each post that lives on the lab site to

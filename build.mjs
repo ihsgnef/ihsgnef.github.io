@@ -179,24 +179,24 @@ ${inner}
 /* --------------------------------------------------------------- layouts */
 
 // The lab's front-page listing (content/praxis.json, written by
-// bin/sync-praxis.mjs), condensed to one line per entry: the title, then the
-// venue pill and the month. Papers are grouped by year, newest first.
+// bin/sync-praxis.mjs), condensed to one list, one line per entry: the title,
+// then a published entry's venue and year (NeurIPS’26) or an unpublished one's
+// month. Posts first, then papers from site.config.json's `praxisSince` on.
 function praxisListing({ posts, papers }) {
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const monthYear = (d) => { const [y, m] = String(d).split('-'); return `${MONTHS[m - 1]} ${y}`; };
-  const pill = (p) => p.venue
-    ? `<span class="pill pill--venue">${esc(p.venue)}${p.note ? ` · ${esc(p.note)}` : ''}</span>` : '';
-  const entry = (p) => `  <li><a href="${p.url}">${esc(p.title)}</a><span class="when">${pill(p)}${
-    p.date ? `<time datetime="${esc(p.date)}">${monthYear(p.date)}</time>` : ''}</span></li>`;
-  const list = (items) => `<ul class="brief">\n${items.map(entry).join('\n')}\n</ul>`;
-  const years = [...new Set(papers.map((p) => String(p.year)))].sort().reverse();
-  return `${posts.length ? `<section class="listing" id="posts">
-<h2 class="eyebrow">Latest</h2>
-${list(posts)}
-</section>` : ''}
-${papers.length ? `<section class="listing" id="papers">
-${years.map((y) => `<h3 class="year">${y}</h3>\n${list(papers.filter((p) => String(p.year) === y))}`).join('\n')}
-</section>` : ''}`;
+  const yy = (p) => String(p.year || p.date).slice(2, 4);
+  const when = (p) => p.venue
+    ? `<span class="pill pill--venue">${esc(p.venue)}’${yy(p)}${p.note ? ` · ${esc(p.note)}` : ''}</span>`
+    : p.date ? `<time datetime="${esc(p.date)}">${monthYear(p.date)}</time>` : '';
+  const entry = (p) => `  <li><a href="${p.url}">${esc(p.title)}</a><span class="when">${when(p)}</span></li>`;
+  const items = [...posts, ...papers.filter((p) => Number(p.year) >= Number(site.praxisSince || 0))];
+  return items.length ? `<section class="listing" id="posts">
+<h2 class="eyebrow">Posts</h2>
+<ul class="brief">
+${items.map(entry).join('\n')}
+</ul>
+</section>` : '';
 }
 
 const layouts = {
