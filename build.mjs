@@ -94,7 +94,15 @@ function splitMeta(html) {
 const assetVersion = createHash('sha1')
   .update(readFileSync(join(ROOT, 'assets', 'design.css')))
   .update(readFileSync(join(ROOT, 'assets', 'style.css')))
+  .update(readFileSync(join(ROOT, 'assets', 'outline.js')))
   .digest('hex').slice(0, 8);
+
+function walkFiles(dir) {
+  return readdirSync(dir).flatMap((name) => {
+    const p = join(dir, name);
+    return statSync(p).isDirectory() ? walkFiles(p) : [p];
+  });
+}
 
 function loadDir(dir) {
   const abs = join(SRC, dir);
@@ -170,10 +178,32 @@ ${inner}
 
 /* --------------------------------------------------------------- layouts */
 
+// The lab's front-page listing (content/praxis.json, written by
+// bin/sync-praxis.mjs), condensed to one line per entry: the title, then the
+// venue pill and the month. Papers are grouped by year, newest first.
+function praxisListing({ posts, papers }) {
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthYear = (d) => { const [y, m] = String(d).split('-'); return `${MONTHS[m - 1]} ${y}`; };
+  const pill = (p) => p.venue
+    ? `<span class="pill pill--venue">${esc(p.venue)}${p.note ? ` · ${esc(p.note)}` : ''}</span>` : '';
+  const entry = (p) => `  <li><a href="${p.url}">${esc(p.title)}</a><span class="when">${pill(p)}${
+    p.date ? `<time datetime="${esc(p.date)}">${monthYear(p.date)}</time>` : ''}</span></li>`;
+  const list = (items) => `<ul class="brief">\n${items.map(entry).join('\n')}\n</ul>`;
+  const years = [...new Set(papers.map((p) => String(p.year)))].sort().reverse();
+  return `${posts.length ? `<section class="listing" id="posts">
+<h2 class="eyebrow">Latest</h2>
+${list(posts)}
+</section>` : ''}
+${papers.length ? `<section class="listing" id="papers">
+${years.map((y) => `<h3 class="year">${y}</h3>\n${list(papers.filter((p) => String(p.year) === y))}`).join('\n')}
+</section>` : ''}`;
+}
+
 const layouts = {
-  home: (page) => `<article class="content home">
+  home: (page, ctx) => `<article class="content home">
 <h1>${esc(site.title)}</h1>
 ${md(page.body, page)}
+${praxisListing(ctx.praxis)}
 </article>`,
 
   page: (page) => `<article class="content">
@@ -240,7 +270,14 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
 const posts = loadDir('blog').sort((a, b) => String(b.date).localeCompare(String(a.date)));
-const ctx = { posts };
+// Posts and papers share one ordering: an explicit "order" (1 = top) wins;
+// otherwise newest first.
+const byOrder = (a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || String(b.date).localeCompare(String(a.date));
+const praxisFile = join(SRC, 'praxis.json');
+const praxis = existsSync(praxisFile) ? JSON.parse(readFileSync(praxisFile, 'utf8')) : { posts: [], papers: [] };
+praxis.posts.sort(byOrder);
+praxis.papers.sort(byOrder);
+const ctx = { posts, praxis };
 
 const pages = readdirSync(SRC).filter((f) => extname(f) === '.md').map((f) => loadPage(basename(f, '.md')));
 
@@ -256,6 +293,14 @@ rmSync(join(OUT, '404'), { recursive: true, force: true });
 
 cpSync(join(ROOT, 'assets'), join(OUT, 'assets'), { recursive: true });
 if (existsSync(join(ROOT, 'static'))) cpSync(join(ROOT, 'static'), OUT, { recursive: true });
+// Standalone pages (the posts copied from the lab site) link the same
+// stylesheets; give them the same cache-busting query as generated pages.
+for (const f of walkFiles(OUT).filter((f) => f.endsWith('.html'))) {
+  const html = readFileSync(f, 'utf8');
+  const versioned = html.replace(/href="\/assets\/(design|style)\.css"/g, `href="/assets/$1.css?v=${assetVersion}"`)
+    .replace(/src="\/assets\/outline\.js"/g, `src="/assets/outline.js?v=${assetVersion}"`);
+  if (versioned !== html) writeFileSync(f, versioned);
+}
 
 // RSS
 const rssItems = posts.map((p) => `  <item>
@@ -302,12 +347,17 @@ if (CHECK) {
     const where = '/' + relative(OUT, f);
     for (const m of html.matchAll(/(?:href|src)="(\/[^"#]*)"/g)) {
       const href = m[1].replace(/\?.*$/, "");   // ignore a cache-busting query
-      const candidates = [href, href + 'index.html', href + '/index.html', href.replace(/\/$/, '') + '/index.html'];
+      const candidates = [href, href + 'index.html', href + '/index.html', href.replace(/\/$/, '') + '/index.html', href + '.html'];
       if (!candidates.some((c) => exists.has(c))) problems.push(`${where}: dead internal link ${href}`);
     }
   }
   // Markdown that failed to parse leaves its source syntax in the output.
-  for (const f of files.filter((f) => f.endsWith('.html'))) {
+  // Only pages this build produced; the posts copied into static/ carry
+  // scripts that look like markdown links.
+  const generated = new Set(written.map((u) =>
+    join(OUT, u === '/' ? 'index.html' : join(u.replace(/^\/|\/$/g, ''), 'index.html'))));
+  generated.add(join(OUT, '404.html'));
+  for (const f of files.filter((f) => f.endsWith('.html') && generated.has(f))) {
     const text = readFileSync(f, 'utf8').replace(/<[^>]+>/g, '');
     for (const m of text.matchAll(/\]\([^)\n]{0,120}\)/g)) {
       problems.push(`/${relative(OUT, f)}: unparsed markdown link "${m[0].slice(0, 60)}"`);

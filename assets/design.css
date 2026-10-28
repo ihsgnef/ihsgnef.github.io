@@ -35,11 +35,11 @@
   --neg:      #9c3d24;   /* refutes, below, fail */
   --pos-wash: rgba(23, 98, 74, 0.10);
   --neg-wash: rgba(156, 61, 36, 0.10);
-  --award:    #b3261e;   /* an oral or spotlight, and nothing else */
-  --award-wash: rgba(179, 38, 30, 0.10);
+  --venue:    #125fa8;   /* a conference pill (venue, oral, spotlight), and nothing else */
+  --venue-wash: rgba(18, 95, 168, 0.10);
 
   --measure:   50rem;    /* reading column */
-  --container: 58rem;    /* full width, for tables and figures */
+  --container: 58rem;    /* full width, for wide tables */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,10 +55,8 @@
     --neg:      #e08a68;
     --pos-wash: rgba(95, 195, 157, 0.12);
     --neg-wash: rgba(224, 138, 104, 0.12);
-  --award:    #f28b82;
-  --award-wash: rgba(242, 139, 130, 0.14);
-    --award:    #f28b82;
-    --award-wash: rgba(242, 139, 130, 0.14);
+    --venue:    #7fb3e8;
+    --venue-wash: rgba(127, 179, 232, 0.14);
   }
 }
 
@@ -74,6 +72,8 @@
   --neg:      #e08a68;
   --pos-wash: rgba(95, 195, 157, 0.12);
   --neg-wash: rgba(224, 138, 104, 0.12);
+  --venue:    #7fb3e8;
+  --venue-wash: rgba(127, 179, 232, 0.14);
 }
 
 /* --- base ---------------------------------------------------------------- */
@@ -191,10 +191,9 @@ td {
 /* 3. meta — bylines, dates, captions, affiliations */
 .meta { font-size: 0.9rem; color: var(--muted); }
 
-/* 4. figure */
-figure { margin: 1.5rem 0; }
-figure img, figure svg { max-width: 100%; height: auto; display: block;
-                         border: 1px solid var(--rule); }
+/* 4. figure — within the reading column, and no border: it sits on the ground */
+figure { margin: 1.5rem 0; max-width: var(--measure); }
+figure img, figure svg { max-width: 100%; height: auto; display: block; }
 figcaption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--muted); }
 
 /* 5. lede — the one paragraph that states the point */

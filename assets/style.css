@@ -61,6 +61,54 @@ main { flex: 1 0 auto; }
 .note { background: var(--surface); padding: 0.6rem 0.9rem; font-size: 0.9rem;
         color: var(--muted); }
 
+/* The rest of this block and the outline below serve the posts copied from
+   praxis-research.org (bin/sync-praxis.mjs); they match its style.css. */
+
+/* In a post's byline, the venue and year of a published post: a step up from
+   the muted authors, without a pill. An unpublished post's date stays muted. */
+.meta .pub { color: var(--ink); font-weight: 600; }
+
+/* A post's links (paper, code, checkpoints) on their own row under the byline,
+   a step smaller than it (13px), as on /grafting. */
+.links { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin: 0.5rem 0 1.5rem; font-size: 0.8125rem; }
+
+/* ------------------------------------------------------------------ outline */
+
+/* A long post's sections: a bar under the site header that sticks while you
+   scroll, and from 1232px an outline fixed left of the reading column
+   instead. /assets/outline.js marks the current section. */
+.outline {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; gap: 1.5rem; overflow-x: auto; scrollbar-width: none;
+  max-width: var(--measure); margin: -3rem 0 2.5rem; padding: 0.7rem 0;
+  background: var(--bg); border-bottom: 1px solid var(--rule);
+  font-size: 0.85rem; line-height: 1.35; white-space: nowrap;
+}
+.outline::-webkit-scrollbar { display: none; }
+.outline a { display: inline-flex; flex-direction: column; flex: none; color: var(--ink); text-decoration: none; }
+.outline a::after { content: attr(data-label); font-weight: 700; height: 0; overflow: hidden; visibility: hidden; }
+.outline a:hover { color: var(--heading); text-decoration: underline; }
+.outline a.on {
+  color: var(--heading); font-weight: 700;
+  text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.3em;
+}
+html:has(.outline) { scroll-padding-top: 3.5rem; }
+
+@media (min-width: 1232px) {
+  .outline {
+    --col: calc(max(0px, (100vw - var(--container)) / 2) + 1.5rem);
+    --left: max(1rem, var(--col) - 2.5rem - 11rem);
+    position: fixed; z-index: 50; top: var(--outline-top, 2rem);
+    left: var(--left); width: calc(var(--col) - 2.5rem - var(--left));
+    margin: 0; padding: 0; border: 0; background: none;
+    flex-direction: column; gap: 0.45rem; overflow: visible; white-space: normal;
+  }
+  .outline a { display: block; }
+  .outline a::after { display: block; }
+  html:has(.outline) { scroll-padding-top: 1.5rem; }
+}
+@media (max-width: 40rem) { .outline { margin-top: -2rem; } }
+
 /* ----------------------------------------------------------------- listings */
 
 /* The front page: eyebrow-labelled sections of entry cards; papers grouped
@@ -84,10 +132,9 @@ main { flex: 1 0 auto; }
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
   white-space: nowrap;
 }
-/* a published venue is tinted green; a presentation (oral, spotlight) rides in
-   the pill and tints it red instead */
-.pill--venue { color: var(--pos); border-color: var(--pos); background: var(--pos-wash); }
-.pill--note { color: var(--award); border-color: var(--award); background: var(--award-wash); }
+/* a conference pill is blue (--venue), the same for a venue and for an oral
+   or spotlight riding in it */
+.pill--venue, .pill--note { color: var(--venue); border-color: var(--venue); background: var(--venue-wash); }
 .entry-meta {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem;
   font-size: 0.85rem; color: var(--muted); margin: 0.35rem 0 0;
@@ -98,6 +145,23 @@ main { flex: 1 0 auto; }
   .entry-head { flex-direction: column; }
   .pill { margin-top: 0; }
 }
+
+/* the front page's copy of the lab listing: one line per entry, the title on
+   the left, the venue pill and month on the right */
+.brief { list-style: none; padding: 0; margin: 0; }
+.brief li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.15rem 1rem;
+  padding: 0.45rem 0; border-bottom: 1px solid var(--rule);
+}
+.brief li:last-child { border-bottom: 0; }
+.brief a, .brief a:visited { color: var(--heading); text-decoration: none; }
+.brief a:hover { text-decoration: underline; }
+.brief .when {
+  flex: none; display: flex; align-items: baseline; gap: 0.6rem;
+  font-size: 0.85rem; color: var(--muted); white-space: nowrap;
+}
+.brief .pill { margin-top: 0; }
+@media (max-width: 480px) { .brief li { flex-direction: column; } }
 
 /* other listings (notes) */
 .post-list { list-style: none; padding: 0; margin: 1.5rem 0 0; }

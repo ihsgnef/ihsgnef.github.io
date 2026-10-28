@@ -27,7 +27,12 @@ check is the bar for "done"; CI runs the same command and blocks the deploy.
    prose verbatim. Do not rewrite copy that was not the point of the task.
 6. **One dependency** (`marked`). Do not add more without being asked. The value
    of this repo is that a person can read all of it in ten minutes.
-7. **Do not touch `static/docs/` or `static/img/`.** Those are the legacy PDFs
+7. **The Praxis listing and posts are generated.** `content/praxis.json`,
+   `static/<post>.html`, `static/figures/` and `assets/outline.js` come from
+   `npm run sync-praxis` (README has the details). Change them on the lab site
+   and re-sync; the copied posts link `/grafting` without a trailing slash, and
+   the check accepts that.
+8. **Do not touch `static/docs/` or `static/img/`.** Those are the legacy PDFs
    and photos from the old site, kept so existing links do not rot.
 
 ## Adding content

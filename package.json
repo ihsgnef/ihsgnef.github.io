@@ -9,7 +9,8 @@
     "serve": "node build.mjs && node serve.mjs",
     "check": "node build.mjs --check",
     "deploy": "node deploy.mjs",
-    "preview": "node build.mjs && node preview.mjs"
+    "preview": "node build.mjs && node preview.mjs",
+    "sync-praxis": "node bin/sync-praxis.mjs"
   },
   "dependencies": {
     "marked": "^15.0.7"
