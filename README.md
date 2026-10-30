@@ -19,6 +19,7 @@ Push to `main` and GitHub Actions builds and deploys.
 | You want to change | Edit |
 | --- | --- |
 | Front page, recruiting list, research focuses | `content/index.md` |
+| Research list under the bio, and the copied posts (`/grafting` …) | `npm run sync-praxis` — see below |
 | Group members and past mentees | `content/group.md` |
 | Publications | `content/publications.md` |
 | Courses | `content/teaching.md` |
@@ -44,6 +45,19 @@ First Author, Second Author, **Shi Feng**
 
 Newest first — the file order is the page order. Bold your own name; the
 stylesheet renders the rest of the line muted.
+
+## The Praxis listing and posts
+
+The front page lists praxis-research.org's front page as one "Posts" list —
+its posts, then its papers from `praxisSince` (in `site.config.json`) on — one
+line each: title, then venue and year (NeurIPS’26) or, if unpublished, month. `npm run sync-praxis` regenerates it
+from a praxis-website checkout (`../praxis-website` at `origin/main` by default;
+`node bin/sync-praxis.mjs <checkout> [ref]` otherwise). It writes
+`content/praxis.json`, copies each post that lives on the lab site to
+`static/<slug>.html` (served at `/<slug>`) with this site's header and footer
+and a canonical link back to the lab site, copies the figures those posts use
+to `static/figures/`, and copies `assets/design.css` and `assets/outline.js`.
+Do not edit any of those by hand; change the lab site and re-sync.
 
 ## Adding a person
 
