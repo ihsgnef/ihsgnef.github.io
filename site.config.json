@@ -4,9 +4,7 @@
   "url": "https://shifeng.me",
   "nav": [
     { "label": "About", "href": "/" },
-    { "label": "Publications", "href": "/publications/" },
-    { "label": "Teaching", "href": "/teaching/" },
-    { "label": "FAQ", "href": "/faq/" }
+    { "label": "Publications", "href": "/publications/" }
   ],
   "contactForm": "https://airtable.com/appHnvwbow1epprSd/pagqZfMyMvha6rWnD/form",
   "interestForm": "https://docs.google.com/forms/d/1r_88bZrZ5QRu9m-pcLHwRPGzmSVLmMPVYD8ruJUaX5k/",
