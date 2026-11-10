@@ -19,8 +19,6 @@ const PAGES = [
   ['About', '/'],
   ['Group', '/group/'],
   ['Publications', '/publications/'],
-  ['Teaching', '/teaching/'],
-  ['FAQ', '/faq/'],
   ['Not found', '/404.html'],
 ];
 

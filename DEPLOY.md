@@ -102,11 +102,12 @@ Cloudflare dashboard:
 
 ## URLs
 
-Preserved: `/`, `/group/`, `/publications/`, `/teaching/`, `/faq/`, and
-everything under `/docs/` and `/img/` from the old `ihsgnef.github.io`.
+Preserved: `/`, `/group/`, `/publications/`, and everything under `/docs/`
+and `/img/` from the old `ihsgnef.github.io`.
 
 Gone: `/mitigating-collusive-self-preference-by-redaction-and-paraphrasing`,
 the unfinished blog post, which was also removed from praxis-research.org.
+`/teaching/` and `/faq/` were removed on 2026-11-10.
 
 ## Rolling back
 

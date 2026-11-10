@@ -22,8 +22,6 @@ Push to `main` and GitHub Actions builds and deploys.
 | Research list under the bio, and the copied posts (`/grafting` …) | `npm run sync-praxis` — see below |
 | Group members and past mentees | `content/group.md` |
 | Publications | `content/publications.md` |
-| Courses | `content/teaching.md` |
-| FAQ | `content/faq.md` |
 | Nav, site title, form URLs, email | `site.config.json` |
 | Colours, fonts, spacing | `assets/design.css` — copied from the lab site; change it there and copy it back |
 | Header, nav, page layouts | `assets/style.css` (no colours; use the tokens) |
